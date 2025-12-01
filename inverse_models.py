@@ -90,7 +90,7 @@ class TrainingPropConfig(BaseSettings):
     )
     file_format: Literal["poscar", "xyz", "pdb"] = "poscar"
     save_strategy: Literal["epoch", "steps", "no"] = "steps"
-    save_steps: int = 100
+    save_steps: int = 20
     save_total_limit: int = 2
 
     callback_samples: int = 2
@@ -224,6 +224,24 @@ def load_model(path="", config=None):
     FastLanguageModel.for_inference(model)
     return model, tokenizer, config
 
+def load_model_test(path="", config=None):
+    if config is None:
+        config_file = os.path.join(path, "config.json")
+        config = loadjson(config_file)
+        config = TrainingPropConfig(**config)
+        pprint.pprint(config.dict())
+    model, tokenizer = FastLanguageModel.from_pretrained(
+        model_name=config.model_name,
+        max_seq_length=config.max_seq_length,
+        dtype=config.dtype,
+        load_in_4bit=config.load_in_4bit,
+    )
+
+    model.load_adapter(path)
+
+    FastLanguageModel.for_inference(model)
+    return model, tokenizer, config
+
 
 def evaluate(
     test_set=[], model="", tokenizer="", csv_out="out.csv", config=""
@@ -233,32 +251,32 @@ def evaluate(
     f.write("id,target,prediction\n")
 
     for i in tqdm(test_set, total=len(test_set)):
-        # try:
+        try:
         # prompt = i["input"]
         # print("prompt", prompt)
-        gen_mat = gen_atoms(
-            prompt=i["input"],
-            tokenizer=tokenizer,
-            model=model,
-            alpaca_prompt=config.alpaca_prompt,
-            instruction=config.instruction,
-        )
-        target_mat = text2atoms("\n" + i["output"])
-        print("target_mat", target_mat)
-        print("genmat", gen_mat)
-        line = (
-            i["id"]
-            + ","
-            + Poscar(target_mat).to_string().replace("\n", "\\n")
-            + ","
-            + Poscar(gen_mat).to_string().replace("\n", "\\n")
-            + "\n"
-        )
-        f.write(line)
+            gen_mat = gen_atoms(
+                prompt=i["input"],
+                tokenizer=tokenizer,
+                model=model,
+                alpaca_prompt=config.alpaca_prompt,
+                instruction=config.instruction,
+            )
+            target_mat = text2atoms("\n" + i["output"])
+            print("target_mat", target_mat)
+            print("genmat", gen_mat)
+            line = (
+                i["id"]
+                + ","
+                + Poscar(target_mat).to_string().replace("\n", "\\n")
+                + ","
+                + Poscar(gen_mat).to_string().replace("\n", "\\n")
+                + "\n"
+            )
+            f.write(line)
         # print()
-    # except Exception as exp:
-    #    print("Error", exp)
-    #    pass
+        except Exception as exp:
+            print("Error", exp)
+            pass
     f.close()
 
 
@@ -273,6 +291,10 @@ def batch_evaluate(
 ):
     gen_atoms = []
     f = open(csv_out, "w")
+
+    import os
+    print("Writing CSV to:", os.path.abspath(csv_out))
+
     if not prompts:
         target_exists = True
         prompts = [i["input"] for i in test_set]
@@ -712,6 +734,7 @@ def main(config_file=None):
     #    tokenizer=tokenizer,
     #    csv_out=config.csv_out,
     #    config=config,
+    #    batch_size=8,
     # )
     # t2 = time.time()
     # t1a = time.time()
@@ -729,8 +752,30 @@ def main(config_file=None):
 if __name__ == "__main__":
     # output_dir = make_id_prop()
     # output_dir="."
+
     args = parser.parse_args(sys.argv[1:])
     main(config_file=args.config_name)
+
     #    config_file="config.json"
     # )
     # x=load_model(path="/wrk/knc6/Software/atomgpt_opt/atomgpt/lora_model_m/")
+
+
+    # model, tokenizer, config = load_model_test(path="/data/atomgpt/lora_model_difractgpt")
+    # m_test = loadjson("/data/atomgpt/outputs_xrd/alpaca_prop_test.json")[:5]
+    # evaluate(
+    #     test_set=m_test,
+    #     model=model,
+    #     tokenizer=tokenizer,
+    #     csv_out=config.csv_out,
+    #     config=config
+    # )
+
+    # batch_evaluate(
+    #     test_set=m_test,
+    #     model=model,
+    #     tokenizer=tokenizer,
+    #     csv_out=config.csv_out,
+    #     config=config,
+    #     batch_size=8,
+    # )
