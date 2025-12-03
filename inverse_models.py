@@ -707,9 +707,10 @@ def main(config_file=None):
             tokenizer=tokenizer,
             max_length=config.max_seq_length,
             callback_samples=callback_samples,
+            step_interval=20, 
         )
         trainer.add_callback(callback)
-    gpu_usage = PrintGPUUsageCallback()
+    gpu_usage = PrintGPUUsageCallback(interval_step=20)
     trainer.add_callback(gpu_usage)
     trainer_stats = trainer.train()
     trainer.save_model(config.model_save_path)
