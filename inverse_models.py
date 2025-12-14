@@ -398,9 +398,13 @@ def main(config_file=None):
     id_prop_path_train = config.id_prop_path_train
     id_prop_path_validation = config.id_prop_path_validation
 
-    run_path = os.path.dirname(id_prop_path_train)
-    run_path_train= os.path.join(run_path, "training")
-    run_path_val= os.path.join(run_path, "validation")
+    # 使用的数据数量
+    train_dataset = "training_quarter"
+    val_dataset = "validation_quarter"
+
+    run_path = os.path.dirname(os.path.dirname(id_prop_path_train))
+    run_path_train= os.path.join(run_path, train_dataset)
+    run_path_val= os.path.join(run_path, val_dataset)
 
     num_train = config.num_train
     num_test = config.num_test
@@ -703,9 +707,10 @@ def main(config_file=None):
             tokenizer=tokenizer,
             max_length=config.max_seq_length,
             callback_samples=callback_samples,
+            step_interval=20, 
         )
         trainer.add_callback(callback)
-    gpu_usage = PrintGPUUsageCallback()
+    gpu_usage = PrintGPUUsageCallback(interval_step=20)
     trainer.add_callback(gpu_usage)
     trainer_stats = trainer.train()
     trainer.save_model(config.model_save_path)
