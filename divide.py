@@ -5,7 +5,7 @@ import pandas as pd
 
 # 项目根目录（本文件所在目录）
 ROOT = Path(__file__).resolve().parent
-DATA_DIR = ROOT / "jarvis_data"
+DATA_DIR = ROOT / "JARVIS_90"
 
 # 三个 split 的配置：csv 文件名 + 对应 VASP 目录名
 SPLITS = {
@@ -82,16 +82,39 @@ def make_subsets_for_split(
     df_half = df_filtered.sample(n=n_half, random_state=random_state)
     df_quarter = df_filtered.sample(n=n_quarter, random_state=random_state + 1)
 
-    # 6) 为两个子集建立新目录
+    # # 6) 为两个子集建立新目录
+    # half_dir = DATA_DIR / f"{vasp_dir_name}_half"
+    # quarter_dir = DATA_DIR / f"{vasp_dir_name}_quarter"
+
+    # half_dir.mkdir(parents=True, exist_ok=True)
+    # quarter_dir.mkdir(parents=True, exist_ok=True)
+
+    # # 7) 在各自目录下写入对应 CSV
+    # half_csv_path = half_dir / f"id_prop_{split_name}_half.csv"
+    # quarter_csv_path = quarter_dir / f"id_prop_{split_name}_quarter.csv"
+
+    # df_half.to_csv(half_csv_path, index=False, header=False)
+    # df_quarter.to_csv(quarter_csv_path, index=False, header=False)
+
+    # print(f"  Saved half CSV    -> {half_csv_path}")
+    # print(f"  Saved quarter CSV -> {quarter_csv_path}")
+
+    # 6) 为两个子集建立 VASP 目录（保持你现在的结构）
     half_dir = DATA_DIR / f"{vasp_dir_name}_half"
     quarter_dir = DATA_DIR / f"{vasp_dir_name}_quarter"
 
     half_dir.mkdir(parents=True, exist_ok=True)
     quarter_dir.mkdir(parents=True, exist_ok=True)
 
-    # 7) 在各自目录下写入对应 CSV
-    half_csv_path = half_dir / f"id_prop_{split_name}_half.csv"
-    quarter_csv_path = quarter_dir / f"id_prop_{split_name}_quarter.csv"
+    # 7) CSV：只用两个总目录 id_prop_half / id_prop_quarter
+    id_prop_half_dir = DATA_DIR / "id_prop_half"
+    id_prop_quarter_dir = DATA_DIR / "id_prop_quarter"
+
+    id_prop_half_dir.mkdir(parents=True, exist_ok=True)
+    id_prop_quarter_dir.mkdir(parents=True, exist_ok=True)
+
+    half_csv_path = id_prop_half_dir / f"id_prop_{split_name}_half.csv"
+    quarter_csv_path = id_prop_quarter_dir / f"id_prop_{split_name}_quarter.csv"
 
     df_half.to_csv(half_csv_path, index=False, header=False)
     df_quarter.to_csv(quarter_csv_path, index=False, header=False)
