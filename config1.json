@@ -2,7 +2,7 @@
     "id_prop_path_train": "/workspace/xrd-gpt/jarvis_data/id_prop_quarter/id_prop_train_quarter.csv",
     "id_prop_path_validation": "/workspace/xrd-gpt/jarvis_data/id_prop_quarter/id_prop_val_quarter.csv",
     "prefix": "atomgpt_run",
-    "model_name": "unsloth/Qwen2.5-7B-Instruct",
+    "model_name": "unsloth/Qwen2.5-7B-Instruct", 
     "batch_size": 5,
     "num_epochs": 5,
     "logging_steps": 1,

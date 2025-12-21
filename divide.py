@@ -5,21 +5,21 @@ import pandas as pd
 
 # 项目根目录（本文件所在目录）
 ROOT = Path(__file__).resolve().parent
-DATA_DIR = ROOT / "JARVIS_90"
+DATA_DIR = ROOT / "vasp_data_0.3_300"
 
 # 三个 split 的配置：csv 文件名 + 对应 VASP 目录名
 SPLITS = {
     "train": {
         "csv": "id_prop_train.csv",
-        "vasp_dir": "training",
+        "vasp_dir": "train",
     },
     "val": {
         "csv": "id_prop_val.csv",
-        "vasp_dir": "validation",
+        "vasp_dir": "val",
     },
     "test": {
         "csv": "id_prop_test.csv",
-        "vasp_dir": "testing",
+        "vasp_dir": "test",
     },
 }
 

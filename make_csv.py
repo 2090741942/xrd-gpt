@@ -1,8 +1,8 @@
 import json
 import csv
 
-json_path = "/workspace/atomgpt/outputs_xrd_quarter/alpaca_prop_test.json"
-csv_path = "/workspace/output.csv"
+json_path = "/workspace/atomgpt/outputs_xrd_quarter90_0.3/alpaca_prop_test.json"
+csv_path = "/workspace/pred_list_inverse_90_0.3.csv"
 
 with open(json_path, "r", encoding="utf-8") as f:
     data = json.load(f)   # data 是一个 list
